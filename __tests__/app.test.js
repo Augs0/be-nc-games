@@ -10,8 +10,7 @@ afterAll(() => db.end());
 
 describe('/api/categories', () => {
   test('GET returns 200 status while serving an array of categories', async () => {
-    const { body } = await request(app).get('/api/categories');
-    expect(200); // status code
+    const { body } = await request(app).get('/api/categories').expect(200);
     expect(body.categories).toBeArray();
     expect(body.categories.length).toBe(4);
     body.categories.forEach((category) => {
@@ -20,6 +19,32 @@ describe('/api/categories', () => {
         description: expect.any(String),
       });
     });
+  });
+});
+
+describe('/api/reviews/:review_id', () => {
+  test('GET returns 200 status while serving a single review object with the expected properties ', async () => {
+    const { body } = await request(app).get('/api/reviews/1').expect(200);
+    expect(body).toEqual({
+      review_id: 1,
+      title: 'Agricola',
+      designer: 'Uwe Rosenberg',
+      owner: 'mallionaire',
+      review_img_url:
+        'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+      review_body: 'Farmyard fun!',
+      category: 'euro game',
+      created_at: '2021-01-18T10:00:20.514Z',
+      votes: 1,
+    });
+  });
+  test('should return a status 404 if valid a number that does not match a review is passed ', async () => {
+    const { body } = await request(app).get('/api/reviews/1000').expect(404);
+    expect(body.msg).toBe('No review found with that ID');
+  });
+  test('should return a status 400 if something other than a number is passed as the ID', async () => {
+    const { body } = await request(app).get('/api/reviews/abc').expect(400);
+    expect(body.msg).toBe('Bad request');
   });
 });
 
