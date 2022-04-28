@@ -8,7 +8,7 @@ const data = require('../db/data/test-data');
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
-describe('/api/categories', () => {
+describe('GET /api/categories', () => {
   test('GET returns 200 status while serving an array of categories', async () => {
     const { body } = await request(app).get('/api/categories').expect(200);
     expect(body.categories).toBeArray();
@@ -22,7 +22,7 @@ describe('/api/categories', () => {
   });
 });
 
-describe('/api/reviews/:review_id', () => {
+describe('GET /api/reviews/:review_id', () => {
   test('GET returns 200 status while serving a single review object with the expected properties ', async () => {
     const { body } = await request(app).get('/api/reviews/1').expect(200);
     expect(body).toEqual({
@@ -45,6 +45,17 @@ describe('/api/reviews/:review_id', () => {
   test('should return a status 400 if something other than a number is passed as the ID', async () => {
     const { body } = await request(app).get('/api/reviews/abc').expect(400);
     expect(body.msg).toBe('Bad request');
+  });
+});
+
+describe('PATCH /api/reviews/:review_id', () => {
+  test('PATCH returns a status code of 200 with review object. The votes should have increased or decreased as expected.', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/1')
+      .send({ inc_votes: 1 })
+      .expect(200);
+    console.log(body);
+    expect(body.review.votes).toBe(2);
   });
 });
 
