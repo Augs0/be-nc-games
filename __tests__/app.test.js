@@ -22,6 +22,7 @@ describe('GET /api/categories', () => {
   });
 });
 
+
 describe('GET /api/reviews/:review_id', () => {
   test('GET returns 200 status while serving a single review object with the expected properties ', async () => {
     const { body } = await request(app).get('/api/reviews/1').expect(200);
@@ -36,6 +37,7 @@ describe('GET /api/reviews/:review_id', () => {
       category: 'euro game',
       created_at: '2021-01-18T10:00:20.514Z',
       votes: 1,
+      comment_count: '1',
     });
   });
   test('should return a status 404 if valid a number that does not match a review is passed ', async () => {
