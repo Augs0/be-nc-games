@@ -3,9 +3,11 @@ const app = express();
 
 const { getCategories } = require('./controllers/category-controller');
 const { getSingleReview } = require('./controllers/review-controller');
+const { getAllUsers } = require('./controllers/user-controller');
 
 app.use('/api/categories', getCategories);
 app.use('/api/reviews/:review_id', getSingleReview);
+app.use('/api/users', getAllUsers);
 
 app.all('/*', (req, res, next) => {
   res.status(404).send({ msg: 'Path not found' });

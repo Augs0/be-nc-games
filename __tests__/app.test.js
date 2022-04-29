@@ -48,6 +48,21 @@ describe('/api/reviews/:review_id', () => {
   });
 });
 
+describe('GET /api/users', () => {
+  test('should return a 200 status code with an array of users', async () => {
+    const { body } = await request(app).get('/api/users').expect(200);
+    expect(body.users).toBeArray();
+    expect(body.users.length).toBe(4);
+    body.users.forEach((user) => {
+      expect(user).toEqual({
+        username: expect.any(String),
+        name: expect.any(String),
+        avatar_url: expect.any(String),
+      });
+    });
+  });
+});
+
 describe('error handling for all API paths', () => {
   test('should return 404 status code if user attempts to visit non-existent path', async () => {
     await request(app)
