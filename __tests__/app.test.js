@@ -118,6 +118,31 @@ describe('PATCH /api/reviews/:review_id', () => {
   });
 });
 
+describe('GET /api/reviews', () => {
+  test('should return a status code of 200 with an array of all reviews. All review objects should have the expected keys', async () => {
+    const { body } = await request(app).get('/api/reviews').expect(200);
+    expect(body.reviews).toBeArray();
+    expect(body.reviews.length).toBe(13);
+    body.reviews.forEach((review) => {
+      expect(review).toEqual({
+        review_id: expect.any(Number),
+        title: expect.any(String),
+        designer: expect.any(String),
+        owner: expect.any(String),
+        review_img_url: expect.any(String),
+        review_body: expect.any(String),
+        category: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+      });
+    });
+  });
+  test('reviews sorted by date order, descending by default', async () => {
+    const { body } = await request(app).get('/api/reviews').expect(200);
+    expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+  });
+});
+
 describe('error handling for all API paths', () => {
   test('should return 404 status code if user attempts to visit non-existent path', async () => {
     await request(app)

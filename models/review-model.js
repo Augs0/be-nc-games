@@ -1,5 +1,17 @@
 const db = require('../db/connection');
 
+const selectAllReviews = () => {
+  return db
+    .query(
+      `
+  SELECT * FROM reviews
+  ORDER BY created_at DESC
+  ;
+  `
+    )
+    .then((result) => result.rows);
+};
+
 const selectSingleReview = (review_id) => {
   return db
     .query(
@@ -41,4 +53,4 @@ const patchSingleReview = (review_id, { inc_votes = 0 }) => {
     });
 };
 
-module.exports = { selectSingleReview, patchSingleReview };
+module.exports = { selectSingleReview, patchSingleReview, selectAllReviews };
