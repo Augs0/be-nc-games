@@ -119,6 +119,48 @@ describe('PATCH /api/reviews/:review_id', () => {
 });
 
 
+describe('POST /api/reviews/:review_id/comments', () => {
+  test('should return status 201 and the posted comment with expected keys', async () => {
+    const { body } = await request(app)
+      .post('/api/reviews/1/comments')
+      .send({ username: 'philippaclaire9', body: 'hi I am a comment' })
+      .expect(201);
+
+    expect(body.newComment).toContainKeys([
+      'comment_id',
+      'body',
+      'author',
+      'created_at',
+      'votes',
+      'review_id',
+    ]);
+    expect(body.newComment.body).toBe('hi I am a comment');
+    expect(body.newComment.author).toBe('philippaclaire9');
+    expect(body.newComment.votes).toBe(0);
+    expect(body.newComment.review_id).toBe(1);
+  });
+  test('should return status 400 when posted comment does not have all expected keys', async () => {
+    const { body } = await request(app)
+      .post('/api/reviews/1/comments')
+      .send({ username: 'philippaclaire9' })
+      .expect(400);
+    expect(body.msg).toBe('Bad request');
+  });
+  test('should return a 404 status code if valid number that does not match a review is passed in path', async () => {
+    const { body } = await request(app)
+      .post('/api/reviews/1000/comments')
+      .send({ username: 'philippaclaire9', body: 'howdy' })
+      .expect(404);
+    expect(body.msg).toBe('Not found');
+  });
+  test('should not allow a user not in the database to post a comment', async () => {
+    const { body } = await request(app)
+      .post('/api/reviews/1/comments')
+      .send({ username: 'augiebear', body: 'halllooo' })
+      .expect(404);
+    expect(body.msg).toBe('Not found');
+
+
 describe('GET /api/reviews/:review_id/comments', () => {
   test('should return a status code of 200 and an array of comments linked to the passed ID ', async () => {
     const { body } = await request(app)
@@ -166,6 +208,7 @@ describe('GET /api/reviews', () => {
   test('reviews sorted by date order, descending by default', async () => {
     const { body } = await request(app).get('/api/reviews').expect(200);
     expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+
 
   });
 });
