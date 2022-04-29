@@ -118,6 +118,32 @@ describe('PATCH /api/reviews/:review_id', () => {
   });
 });
 
+
+describe('GET /api/reviews/:review_id/comments', () => {
+  test('should return a status code of 200 and an array of comments linked to the passed ID ', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews/1/comments')
+      .expect(200);
+    expect(body).toBeArray();
+    expect(body.length).toBe(1);
+    body.forEach((comment) => {
+      expect(comment).toEqual({
+        comment_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(String),
+        author: expect.any(String),
+        body: expect.any(String),
+      });
+    });
+  });
+  test('should return a status 404 if valid a number that does not match a review is passed ', async () => {
+    const { body } = await request(app).get('/api/reviews/1000').expect(404);
+    expect(body.msg).toBe('No review found with that ID');
+  });
+  test('should return a status 400 if something other than a number is passed as the ID', async () => {
+    const { body } = await request(app).get('/api/reviews/abc').expect(400);
+    expect(body.msg).toBe('Bad request');
+
 describe('GET /api/reviews', () => {
   test('should return a status code of 200 with an array of all reviews. All review objects should have the expected keys', async () => {
     const { body } = await request(app).get('/api/reviews').expect(200);
@@ -140,6 +166,7 @@ describe('GET /api/reviews', () => {
   test('reviews sorted by date order, descending by default', async () => {
     const { body } = await request(app).get('/api/reviews').expect(200);
     expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+
   });
 });
 

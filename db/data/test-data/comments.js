@@ -3,7 +3,7 @@ module.exports = [
     body: 'I loved this game too!',
     votes: 16,
     author: 'bainesface',
-    review_id: 2,
+    review_id: 1,
     created_at: new Date(1511354613389),
   },
   {
