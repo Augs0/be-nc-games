@@ -49,13 +49,58 @@ describe('GET /api/reviews/:review_id', () => {
 });
 
 describe('PATCH /api/reviews/:review_id', () => {
-  test('PATCH returns a status code of 200 with review object. The votes should have increased or decreased as expected.', async () => {
+  test('PATCH returns a status code of 200 with review object. The votes should have increased as expected.', async () => {
     const { body } = await request(app)
       .patch('/api/reviews/1')
       .send({ inc_votes: 1 })
       .expect(200);
-    console.log(body);
     expect(body.review.votes).toBe(2);
+  });
+  test('PATCH returns a status code of 200 with review object. The votes should have decreased as expected when passed a negaitve number.', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/1')
+      .send({ inc_votes: -1 })
+      .expect(200);
+    expect(body.review.votes).toBe(0);
+  });
+  test('PATCH returns a status code of 200 with review object unchanged when an empty object is sent in the body.', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/1')
+      .send({})
+      .expect(200);
+    expect(body.review.votes).toBe(1);
+  });
+  test('PATCH returns a status code of 200 with review object. Votes should be incremented from previous changes i.e. data persists.', async () => {
+    await request(app)
+      .patch('/api/reviews/1')
+      .send({ inc_votes: 3 })
+      .expect(200);
+    const { body } = await request(app)
+      .patch('/api/reviews/1')
+      .send({ inc_votes: 1 })
+      .expect(200);
+    expect(body.review.votes).toBe(5);
+  });
+  test('should return a status 404 if valid number that does not match a review is passed in path ', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/1000')
+      .send({ inc_votes: 1 })
+      .expect(404);
+    expect(body.msg).toBe('No review found with that ID');
+  });
+  test('should return a status 400 if something that is not a number is passed in path', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/abc')
+      .send({ inc_votes: 1 })
+      .expect(400);
+    expect(body.msg).toBe('Bad request');
+  });
+  test('should return a status 400 if something not a number is passed with inc_votes in body ', async () => {
+    const { body } = await request(app)
+      .patch('/api/reviews/abc')
+      .send({ inc_votes: 'hello' })
+      .expect(400);
+    expect(body.msg).toBe('Bad request');
   });
 });
 

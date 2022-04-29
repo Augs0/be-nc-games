@@ -22,7 +22,14 @@ const patchSingleReview = (review_id, { inc_votes = 0 }) => {
       [inc_votes, review_id]
     )
     .then((result) => {
-      return result.rows[0];
+      if (result.rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: 'No review found with that ID',
+        });
+      } else {
+        return result.rows[0];
+      }
     });
 };
 
