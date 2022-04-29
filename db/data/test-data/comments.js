@@ -17,7 +17,7 @@ module.exports = [
     body: "I didn't know dogs could play games",
     votes: 10,
     author: 'philippaclaire9',
-    review_id: 3,
+    review_id: 1,
     created_at: new Date(1610964588110),
   },
   {

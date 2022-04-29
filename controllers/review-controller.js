@@ -1,8 +1,21 @@
 const {
   selectSingleReview,
   patchSingleReview,
+
   selectReviewComments,
+
+  selectAllReviews,
+
 } = require('../models/review-model');
+
+const getReviews = async (req, res, next) => {
+  try {
+    const reviews = await selectAllReviews(req.query);
+    res.status(200).send({ reviews });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getSingleReview = async (req, res, next) => {
   const { review_id } = req.params;
@@ -35,4 +48,6 @@ const getReviewComments = async (req, res, next) => {
   }
 };
 
-module.exports = { getSingleReview, updateSingleReview, getReviewComments };
+
+module.exports = { getSingleReview, updateSingleReview, getReviews, getReviewComments };
+

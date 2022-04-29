@@ -22,6 +22,7 @@ describe('GET /api/categories', () => {
   });
 });
 
+
 describe('GET /api/reviews/:review_id', () => {
   test('GET returns 200 status while serving a single review object with the expected properties ', async () => {
     const { body } = await request(app).get('/api/reviews/1').expect(200);
@@ -36,6 +37,7 @@ describe('GET /api/reviews/:review_id', () => {
       category: 'euro game',
       created_at: '2021-01-18T10:00:20.514Z',
       votes: 1,
+      comment_count: '1',
     });
   });
   test('should return a status 404 if valid a number that does not match a review is passed ', async () => {
@@ -48,6 +50,18 @@ describe('GET /api/reviews/:review_id', () => {
   });
 });
 
+describe('GET /api/users', () => {
+  test('should return a 200 status code with an array of users', async () => {
+    const { body } = await request(app).get('/api/users').expect(200);
+    expect(body.users).toBeArray();
+    expect(body.users.length).toBe(4);
+    body.users.forEach((user) => {
+      expect(user).toEqual({
+        username: expect.any(String),
+        name: expect.any(String),
+        avatar_url: expect.any(String),
+      });
+    });
 describe('PATCH /api/reviews/:review_id', () => {
   test('PATCH returns a status code of 200 with review object. The votes should have increased as expected.', async () => {
     const { body } = await request(app)
@@ -104,6 +118,7 @@ describe('PATCH /api/reviews/:review_id', () => {
   });
 });
 
+
 describe('GET /api/reviews/:review_id/comments', () => {
   test('should return a status code of 200 and an array of comments linked to the passed ID ', async () => {
     const { body } = await request(app)
@@ -128,6 +143,30 @@ describe('GET /api/reviews/:review_id/comments', () => {
   test('should return a status 400 if something other than a number is passed as the ID', async () => {
     const { body } = await request(app).get('/api/reviews/abc').expect(400);
     expect(body.msg).toBe('Bad request');
+
+describe('GET /api/reviews', () => {
+  test('should return a status code of 200 with an array of all reviews. All review objects should have the expected keys', async () => {
+    const { body } = await request(app).get('/api/reviews').expect(200);
+    expect(body.reviews).toBeArray();
+    expect(body.reviews.length).toBe(13);
+    body.reviews.forEach((review) => {
+      expect(review).toEqual({
+        review_id: expect.any(Number),
+        title: expect.any(String),
+        designer: expect.any(String),
+        owner: expect.any(String),
+        review_img_url: expect.any(String),
+        review_body: expect.any(String),
+        category: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+      });
+    });
+  });
+  test('reviews sorted by date order, descending by default', async () => {
+    const { body } = await request(app).get('/api/reviews').expect(200);
+    expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+
   });
 });
 
