@@ -22,7 +22,6 @@ describe('GET /api/categories', () => {
   });
 });
 
-
 describe('GET /api/reviews/:review_id', () => {
   test('GET returns 200 status while serving a single review object with the expected properties ', async () => {
     const { body } = await request(app).get('/api/reviews/1').expect(200);
@@ -37,7 +36,7 @@ describe('GET /api/reviews/:review_id', () => {
       category: 'euro game',
       created_at: '2021-01-18T10:00:20.514Z',
       votes: 1,
-      comment_count: '1',
+      comment_count: '2',
     });
   });
   test('should return a status 404 if valid a number that does not match a review is passed ', async () => {
@@ -62,6 +61,9 @@ describe('GET /api/users', () => {
         avatar_url: expect.any(String),
       });
     });
+  });
+});
+
 describe('PATCH /api/reviews/:review_id', () => {
   test('PATCH returns a status code of 200 with review object. The votes should have increased as expected.', async () => {
     const { body } = await request(app)
@@ -75,6 +77,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       .patch('/api/reviews/1')
       .send({ inc_votes: -1 })
       .expect(200);
+
     expect(body.review.votes).toBe(0);
   });
   test('PATCH returns a status code of 200 with review object unchanged when an empty object is sent in the body.', async () => {
@@ -118,7 +121,6 @@ describe('PATCH /api/reviews/:review_id', () => {
   });
 });
 
-
 describe('POST /api/reviews/:review_id/comments', () => {
   test('should return status 201 and the posted comment with expected keys', async () => {
     const { body } = await request(app)
@@ -159,7 +161,8 @@ describe('POST /api/reviews/:review_id/comments', () => {
       .send({ username: 'augiebear', body: 'halllooo' })
       .expect(404);
     expect(body.msg).toBe('Not found');
-
+  });
+});
 
 describe('GET /api/reviews/:review_id/comments', () => {
   test('should return a status code of 200 and an array of comments linked to the passed ID ', async () => {
@@ -167,7 +170,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
       .get('/api/reviews/1/comments')
       .expect(200);
     expect(body).toBeArray();
-    expect(body.length).toBe(1);
+    expect(body.length).toBe(2);
     body.forEach((comment) => {
       expect(comment).toEqual({
         comment_id: expect.any(Number),
@@ -185,6 +188,8 @@ describe('GET /api/reviews/:review_id/comments', () => {
   test('should return a status 400 if something other than a number is passed as the ID', async () => {
     const { body } = await request(app).get('/api/reviews/abc').expect(400);
     expect(body.msg).toBe('Bad request');
+  });
+});
 
 describe('GET /api/reviews', () => {
   test('should return a status code of 200 with an array of all reviews. All review objects should have the expected keys', async () => {
@@ -208,8 +213,45 @@ describe('GET /api/reviews', () => {
   test('reviews sorted by date order, descending by default', async () => {
     const { body } = await request(app).get('/api/reviews').expect(200);
     expect(body.reviews).toBeSortedBy('created_at', { descending: true });
-
-
+  });
+  test('reviews can take a sort by query', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?sort_by=votes')
+      .expect(200);
+    expect(body.reviews).toBeSortedBy('votes', { descending: true });
+  });
+  test('reviews can take an order by query', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=asc')
+      .expect(200);
+    expect(body.reviews).toBeSortedBy('created_at', { descending: false });
+  });
+  test('reviews can take a category query', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?category=dexterity')
+      .expect(200);
+    const { reviews } = body;
+    reviews.forEach((review) => {
+      expect(review.category).toBe('dexterity');
+    });
+  });
+  test('400 - returns 400 status code when invalid sort query used', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?sort_by=not-a-column')
+      .expect(400);
+    expect(body.msg).toBe('Invalid sort query');
+  });
+  test('400 - returns 400 status code when invalid order query used', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=invalid')
+      .expect(400);
+    expect(body.msg).toBe('Invalid order query');
+  });
+  test('404 - returns 404 status code when invalid category query used', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?category=notacategory')
+      .expect(404);
+    expect(body.msg).toBe('That category does not exist yet');
   });
 });
 
