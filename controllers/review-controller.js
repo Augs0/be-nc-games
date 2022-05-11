@@ -1,11 +1,8 @@
 const {
   selectSingleReview,
   patchSingleReview,
-
   selectReviewComments,
-
   selectAllReviews,
-
 } = require('../models/review-model');
 
 const getReviews = async (req, res, next) => {
@@ -48,6 +45,9 @@ const getReviewComments = async (req, res, next) => {
   }
 };
 
-
-module.exports = { getSingleReview, updateSingleReview, getReviews, getReviewComments };
-
+module.exports = {
+  getSingleReview,
+  updateSingleReview,
+  getReviews,
+  getReviewComments,
+};
