@@ -273,6 +273,13 @@ describe('DELETE /api/comments/:comment_id', () => {
   });
 });
 
+describe('GET /api', () => {
+  test('returns list of all endpoints a user can access', async () => {
+    const { body } = await request(app).get('/api').expect(200);
+    expect(typeof body.endpoints).toBe('object');
+  });
+});
+
 describe('error handling for all API paths', () => {
   test('should return 404 status code if user attempts to visit non-existent path', async () => {
     await request(app)
