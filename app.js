@@ -10,7 +10,10 @@ const {
   getReviewComments,
   getReviews,
 } = require('./controllers/review-controller');
-const { postComment } = require('./controllers/comment-controller');
+const {
+  postComment,
+  deleteComment,
+} = require('./controllers/comment-controller');
 
 app.use(express.json());
 
@@ -25,6 +28,8 @@ app.get('/api/reviews/:review_id/comments', getReviewComments);
 app.patch('/api/reviews/:review_id', updateSingleReview);
 
 app.post('/api/reviews/:review_id/comments', postComment);
+
+app.delete('/api/comments/:comment_id', deleteComment);
 
 app.get('/api/users', getAllUsers);
 

@@ -255,6 +255,24 @@ describe('GET /api/reviews', () => {
   });
 });
 
+describe('DELETE /api/comments/:comment_id', () => {
+  test('return 204 and no content', async () => {
+    await request(app).delete('/api/comments/1').expect(204);
+  });
+  test('return 400 if something other than a coment id passed in path', async () => {
+    const { body } = await request(app)
+      .delete('/api/comments/nonsense')
+      .expect(400);
+    expect(body.msg).toBe('Bad request');
+  });
+  test('return 404 if comment id is non-existent', async () => {
+    const { body } = await request(app)
+      .delete('/api/comments/3000')
+      .expect(404);
+    expect(body.msg).toBe('No comment found');
+  });
+});
+
 describe('error handling for all API paths', () => {
   test('should return 404 status code if user attempts to visit non-existent path', async () => {
     await request(app)
