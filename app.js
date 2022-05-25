@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 const { getCategories } = require('./controllers/category-controller');
 
@@ -16,6 +17,7 @@ const {
   deleteComment,
 } = require('./controllers/comment-controller');
 
+app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
