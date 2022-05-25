@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const endpoints = require('./endpoints.json');
 
 const { getCategories } = require('./controllers/category-controller');
 
@@ -18,6 +17,7 @@ const {
 } = require('./controllers/comment-controller');
 
 app.use(express.json());
+app.use(express.static('public'));
 
 app.get('/api/categories', getCategories);
 
@@ -34,10 +34,6 @@ app.post('/api/reviews/:review_id/comments', postComment);
 app.delete('/api/comments/:comment_id', deleteComment);
 
 app.get('/api/users', getAllUsers);
-
-app.get('/api', (req, res) => {
-  res.status(200).send({ endpoints });
-});
 
 app.all('/*', (req, res, next) => {
   res.status(404).send({ msg: 'Path not found' });
