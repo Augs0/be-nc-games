@@ -1,5 +1,11 @@
 # Northcoders House of Games API
 
+This app is a fake board games reviews site that uses dummy data from the Northcoders' syllabus. It was built with Node, Express, PostgreSQL, HTML and CSS. You can visit the hosted version at nc-news-august.herokuapp.com/
+
+## Requirements
+
+Node and PostgreSQL are required for this application to run. Node should be version 16.13.0 or above and PostgreSQL should be version 14.1 or above.
+
 ## How to use this repo
 
 Clone down the repo and run `npm install` to make sure you have all required packages.
