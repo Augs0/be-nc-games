@@ -17,8 +17,6 @@ const {
   deleteComment,
 } = require('./controllers/comment-controller');
 
-const { getEndpoints } = require('./controllers/api-controller');
-
 app.use(express.json());
 
 app.get('/api/categories', getCategories);

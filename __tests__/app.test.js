@@ -207,6 +207,7 @@ describe('GET /api/reviews', () => {
         category: expect.any(String),
         created_at: expect.any(String),
         votes: expect.any(Number),
+        comment_count: expect.any(Number),
       });
     });
   });
@@ -259,7 +260,7 @@ describe('DELETE /api/comments/:comment_id', () => {
   test('return 204 and no content', async () => {
     await request(app).delete('/api/comments/1').expect(204);
   });
-  test('return 400 if something other than a coment id passed in path', async () => {
+  test('return 400 if something other than a comment id passed in path', async () => {
     const { body } = await request(app)
       .delete('/api/comments/nonsense')
       .expect(400);
@@ -276,6 +277,7 @@ describe('DELETE /api/comments/:comment_id', () => {
 describe('GET /api', () => {
   test('returns list of all endpoints a user can access', async () => {
     const { body } = await request(app).get('/api').expect(200);
+
     expect(typeof body.endpoints).toBe('object');
   });
 });
