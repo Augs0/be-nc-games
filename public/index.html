@@ -42,16 +42,12 @@
 
         <article>
           <details>
-            <summary>PATCH /api/reviews/:review_id</summary>
+            <summary>GET /api/users</summary>
             <details>
-              <summary>Example Request</summary>
-              <code> { inc_votes: Number } </code>
               <summary>Example Response</summary>
               <code>
-                { review: { review_id: Number, title: String, owner: String,
-                designer: String, review_body: String, review_img_url: String,
-                category: String, created_at: String, votes: Number,
-                comment_count: String } }
+                { users: [ { username: String, name: String, avatar_url: String
+                } ] }
               </code>
             </details>
           </details>
